@@ -1,15 +1,51 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, } from 'react';
 import { User, Bell, Shield, Palette, Globe } from 'lucide-react';
+import { settingsAPI } from '../lib/api';
 
 const Settings: React.FC = () => {
-  const [notifications, setNotifications] = useState({
+  // const [notifications, setNotifications] = useState({
+  //   examReminders: true,
+  //   resultNotifications: true,
+  //   systemUpdates: false
+  // });
+
+  const notifications = {
     examReminders: true,
     resultNotifications: true,
-    systemUpdates: false
-  });
+    systemUpdates: false,
+  };
 
   const [theme, setTheme] = useState('light');
   const [language, setLanguage] = useState('en');
+
+  // Create refs for inputs to read values on save
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+
+  // Save handler
+  const handleSave = async () => {
+    const full_name = fullNameRef.current?.value || '';
+    const email = emailRef.current?.value || '';
+    const phone = phoneRef.current?.value || '';
+
+    try {
+      const userId = 1; // Replace with actual user ID from auth context or state
+
+      await settingsAPI.saveSettings(userId, {
+        full_name,
+        email,
+        phone,
+        notifications, // You can also read from the actual state if you convert checkboxes to controlled inputs
+        theme,
+        language
+      });
+
+      alert('Settings saved successfully');
+    } catch (err: any) {
+      alert(err.message || 'Failed to save settings');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -163,9 +199,12 @@ const Settings: React.FC = () => {
 
         {/* Save Button */}
         <div className="flex justify-end">
-          <button className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
-            Save Changes
-          </button>
+          <button
+          onClick={handleSave}
+          className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
+        >
+          Save Changes
+        </button>
         </div>
       </div>
     </div>
