@@ -19,6 +19,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+  console.log("User role:", user.role);
 
   if (requiredRole && user.role !== requiredRole) {
     // Redirect to appropriate portal based on user role

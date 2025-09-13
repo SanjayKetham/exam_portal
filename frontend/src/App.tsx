@@ -5,12 +5,14 @@ import LoginPage from './pages/LoginPage';
 import UserPortal from './pages/UserPortal';
 import AdminPortal from './pages/AdminPortal';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route 
           path="/portal" 
           element={
