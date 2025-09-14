@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap, AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,8 +13,8 @@ const LoginPage: React.FC = () => {
 
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
+  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       const redirectPath = user.role === 'admin' ? '/admin' : '/portal';
@@ -26,14 +27,20 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setError('');
 
-    const result = await signIn(email, password);
+    try {
+      // signIn should return { user, error }
+      const result = await signIn(email, password);
 
-    if (result.error) {
-      setError(result.error);
+      if (result.error) {
+        setError(result.error);
+      } else if (result.user) {
+        const redirectPath = result.user.role === 'admin' ? '/admin' : '/portal';
+        navigate(redirectPath, { replace: true });
+      }
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+    } finally {
       setLoading(false);
-    } else if (result.user) {
-      const redirectPath = result.user.role === 'admin' ? '/admin' : '/portal';
-      navigate(redirectPath, { replace: true });
     }
   };
 
@@ -51,14 +58,12 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden grid md:grid-cols-2">
-        
-        {/* Left Ad / Promo Section */}
+        {/* Left Promo Section */}
         <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-10">
           <GraduationCap className="w-16 h-16 mb-6" />
           <h2 className="text-3xl font-bold mb-4">Welcome to EduPortal</h2>
           <p className="text-lg text-blue-100 text-center">
-            Your personalized platform for learning and managing academics.  
-            Stay connected, stay ahead.
+            Your personalized platform for learning and managing academics. Stay connected, stay ahead.
           </p>
         </div>
 
@@ -160,7 +165,6 @@ const LoginPage: React.FC = () => {
               </button>
             </form>
 
-            {/* Register Link */}
             <p className="text-sm text-gray-600 mt-6 text-center">
               Don’t have an account?{' '}
               <button

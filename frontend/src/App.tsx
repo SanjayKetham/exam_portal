@@ -6,10 +6,14 @@ import UserPortal from './pages/UserPortal';
 import AdminPortal from './pages/AdminPortal';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RegisterPage from './pages/RegisterPage';
+import { Toaster } from 'react-hot-toast'; // <-- import Toaster
 
 function App() {
   return (
     <AuthProvider>
+      {/* Mount Toaster once at top-level */}
+      <Toaster position="top-right" reverseOrder={false} />
+      
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

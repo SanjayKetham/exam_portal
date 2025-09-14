@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { authAPI, User } from '../lib/api';
+import toast from 'react-hot-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -50,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("auth_token", token);
     localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
+    toast.success("Login successfully");
     return { user };
   } catch (error) {
     return { error: (error as Error).message };
@@ -87,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   localStorage.removeItem("auth_token");
   localStorage.removeItem("user");
   setUser(null);
+  toast.success("Logged out successfully");
 };
 
 
